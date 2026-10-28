@@ -1,0 +1,11 @@
+feature_set,evaluation,MAE,RMSE,R2
+Full features,Median baseline,2.316,2.904,-0.061
+Full features,Linear Regression,1.117,1.843,0.573
+Full features,Ridge Regression,1.172,1.86,0.565
+Full features,Random Forest,1.363,1.988,0.503
+Full features,Nested model selection,1.191,1.843,0.573
+Without activity type,Median baseline,2.316,2.904,-0.061
+Without activity type,Linear Regression,1.134,1.851,0.569
+Without activity type,Ridge Regression,1.153,1.846,0.571
+Without activity type,Random Forest,1.36,1.974,0.51
+Without activity type,Nested model selection,1.14,1.855,0.567

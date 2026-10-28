@@ -1,0 +1,6 @@
+evaluation,MAE,RMSE,R2
+Median baseline,2.316,2.904,-0.061
+Linear Regression,1.117,1.843,0.573
+Ridge Regression,1.172,1.86,0.565
+Random Forest,1.363,1.988,0.503
+Nested model selection,1.191,1.843,0.573

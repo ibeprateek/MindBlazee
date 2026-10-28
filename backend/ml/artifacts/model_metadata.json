@@ -1,0 +1,15 @@
+{
+  "selected_model": "Ridge Regression",
+  "training_rows": 49,
+  "target": "fatigue_rating_0_to_10",
+  "features": [
+    "work_hours",
+    "interruption_count",
+    "pending_task_minutes",
+    "task_difficulty_1_to_5",
+    "sleep_hours",
+    "activity_type"
+  ],
+  "validation": "5-fold shuffled cross-validation",
+  "warning": "Small exploratory dataset. Cross-validation estimates are uncertain and do not establish clinical validity."
+}

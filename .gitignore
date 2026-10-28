@@ -1,0 +1,31 @@
+﻿# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Frontend dependencies and builds
+node_modules/
+dist/
+.vite/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Logs and local databases
+*.log
+*.sqlite3
+
+# Private survey data
+backend/data/
+
+# Local evaluation outputs
+backend/ml/evaluation/
+backend/recommendation_evaluation_results.csv
