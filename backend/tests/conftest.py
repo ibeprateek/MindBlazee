@@ -14,10 +14,10 @@ from app.models import Task, User  # Ensure models are registered
 
 test_database_url = URL.create(
     drivername="mysql+pymysql",
-    username=settings.db_user,
-    password=settings.db_password,
-    host=settings.db_host,
-    port=settings.db_port,
+    username=settings.test_db_user,
+    password=settings.test_db_password,
+    host=settings.test_db_host,
+    port=settings.test_db_port,
     database=settings.test_db_name,
     query={"charset": "utf8mb4"},
 )

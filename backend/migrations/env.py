@@ -1,4 +1,4 @@
-
+from pathlib import Path
 from logging.config import fileConfig
 
 from alembic import context
@@ -48,12 +48,29 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+
 def run_migrations_online() -> None:
+    connect_args = {}
+
+    if settings.db_ssl_ca:
+        ca_path = Path(settings.db_ssl_ca)
+
+        if not ca_path.is_absolute():
+            ca_path = Path(__file__).resolve().parents[1] / ca_path
+
+        if not ca_path.is_file():
+            raise FileNotFoundError(
+                f"MySQL CA certificate not found: {ca_path}"
+            )
+
+        connect_args["ssl"] = {"ca": str(ca_path)}
+
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
         pool_pre_ping=True,
+        connect_args=connect_args,
     )
 
     with connectable.connect() as connection:
@@ -67,6 +84,7 @@ def run_migrations_online() -> None:
             context.run_migrations()
 
     connectable.dispose()
+
 
 
 if context.is_offline_mode():

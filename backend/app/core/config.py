@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     db_name: str = "mindblaze_db"
     db_user: str = "mindblaze_app"
     db_password: str
+    db_ssl_ca: str = ""
+    frontend_url: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -23,6 +25,10 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
 
     test_db_name: str = "mindblaze_test_db"
+    test_db_host: str = "127.0.0.1"
+    test_db_port: int = 3306
+    test_db_user: str = "root"
+    test_db_password: str
 
 
 settings = Settings()

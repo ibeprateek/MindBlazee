@@ -29,3 +29,4 @@ backend/data/
 # Local evaluation outputs
 backend/ml/evaluation/
 backend/recommendation_evaluation_results.csv
+certs/
