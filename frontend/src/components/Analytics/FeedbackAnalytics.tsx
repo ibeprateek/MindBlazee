@@ -30,8 +30,8 @@ export default function FeedbackAnalytics() {
 
   if (loading) {
     return (
-      <section className="glass-panel rounded-2xl p-6">
-        <p className="text-sm text-[#858c85]">
+      <section className="mb-card p-6">
+        <p className="text-sm text-ink-2">
           Loading feedback analytics...
         </p>
       </section>
@@ -40,14 +40,14 @@ export default function FeedbackAnalytics() {
 
   if (error || !data) {
     return (
-      <section className="glass-panel rounded-2xl p-6">
-        <p role="alert" className="text-sm text-red-700">
+      <section className="mb-card p-6">
+        <p role="alert" className="text-sm text-danger">
           {error || 'No feedback analytics available.'}
         </p>
         <button
           type="button"
           onClick={() => void loadAnalytics()}
-          className="mt-3 rounded-xl bg-[#397858] px-4 py-2 text-sm font-semibold text-white"
+          className="mb-btn mt-3"
         >
           Try again
         </button>
@@ -75,16 +75,13 @@ export default function FeedbackAnalytics() {
   ]
 
   return (
-    <section className="glass-panel space-y-5 rounded-2xl p-5 sm:p-6">
+    <section className="mb-card space-y-5 p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.17em] text-[#5b8a67]">
-            USER FEEDBACK
-          </p>
-          <h2 className="font-[Manrope] text-xl font-bold">
+          <h2 className="mb-title">
             Recommendation feedback analytics
           </h2>
-          <p className="mt-1 text-sm leading-6 text-[#858c85]">
+          <p className="mt-1 text-sm leading-6 text-ink-2">
             See how you have responded to your recommendations.
           </p>
         </div>
@@ -92,7 +89,7 @@ export default function FeedbackAnalytics() {
         <button
           type="button"
           onClick={() => void loadAnalytics()}
-          className="rounded-xl border border-[#dce8dc] px-3 py-2 text-sm font-semibold text-[#397858] hover:bg-[#edf5ed]"
+          className="mb-btn-ghost mb-btn-sm"
         >
           Refresh
         </button>
@@ -100,32 +97,32 @@ export default function FeedbackAnalytics() {
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {metrics.map((metric) => (
-          <div key={metric.label} className="rounded-xl bg-white/60 p-4">
-            <p className="text-sm text-[#858c85]">{metric.label}</p>
-            <p className="mt-2 text-2xl font-bold text-[#315d3d]">
+          <div key={metric.label} className="rounded-xl bg-tray-2 p-4">
+            <p className="text-sm text-ink-2">{metric.label}</p>
+            <p className="mt-2 text-2xl font-medium text-ink">
               {metric.value}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="rounded-xl bg-white/60 p-4">
+      <div className="rounded-xl bg-tray-2 p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-sm text-[#858c85]">
+            <p className="text-sm text-ink-2">
               Share of feedback marked helpful
             </p>
-            <p className="mt-2 text-3xl font-bold text-[#315d3d]">
+            <p className="mt-2 text-3xl font-medium text-ink">
               {data.helpfulness_percentage.toFixed(2)}%
             </p>
           </div>
-          <div className="rounded-xl bg-[#edf5ed] px-3 py-2 text-sm font-semibold text-[#397858]">
+          <div className="mb-chip mb-chip--blue !px-3 !py-1.5 !text-sm">
             {data.total_feedback} responses
           </div>
         </div>
 
         <div
-          className="mt-4 h-2 overflow-hidden rounded-full bg-[#e4eae3]"
+          className="mt-4 h-2 overflow-hidden rounded-full bg-tray"
           role="progressbar"
           aria-label="Share of feedback marked helpful"
           aria-valuemin={0}
@@ -133,7 +130,7 @@ export default function FeedbackAnalytics() {
           aria-valuenow={data.helpfulness_percentage}
         >
           <div
-            className="h-full rounded-full bg-[#397858] transition-all"
+            className="h-full rounded-full bg-blue transition-all"
             style={{
               width: `${Math.min(100, Math.max(0, data.helpfulness_percentage))}%`,
             }}
@@ -142,12 +139,12 @@ export default function FeedbackAnalytics() {
       </div>
 
       <div className="space-y-3">
-        <h3 className="font-semibold text-[#263b2b]">
+        <h3 className="font-medium text-ink">
           Feedback by recommendation
         </h3>
 
         {data.recommendation_breakdown.length === 0 ? (
-          <p className="rounded-xl bg-white/60 p-4 text-sm text-[#858c85]">
+          <p className="rounded-xl bg-tray-2 p-4 text-sm text-ink-2">
             No feedback submitted yet. Respond to a recommendation to see
             your results here.
           </p>
@@ -155,24 +152,24 @@ export default function FeedbackAnalytics() {
           data.recommendation_breakdown.map((item) => (
             <article
               key={`${item.factor}::${item.title}`}
-              className="rounded-xl border border-white/80 bg-white/60 p-4"
+              className="rounded-xl border border-line bg-tray-2 p-4"
             >
-              <p className="font-semibold text-[#263b2b]">{item.title}</p>
-              <p className="mt-1 text-xs capitalize text-[#858c85]">
+              <p className="font-medium text-ink">{item.title}</p>
+              <p className="mt-1 text-xs capitalize text-ink-2">
                 {item.factor.replace(/_/g, ' ')}
               </p>
 
               <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                <p className="text-sm text-[#737d74]">
+                <p className="text-sm text-ink-2">
                   Total: <strong>{item.total}</strong>
                 </p>
-                <p className="text-sm text-[#397858]">
+                <p className="text-sm text-blue-ink">
                   Helpful: <strong>{item.helpful}</strong>
                 </p>
-                <p className="text-sm text-red-700">
+                <p className="text-sm text-danger">
                   Not helpful: <strong>{item.not_helpful}</strong>
                 </p>
-                <p className="text-sm text-[#737d74]">
+                <p className="text-sm text-ink-2">
                   Will try: <strong>{item.will_try}</strong>
                 </p>
               </div>
@@ -181,7 +178,7 @@ export default function FeedbackAnalytics() {
         )}
       </div>
 
-      <p className="text-xs leading-5 text-[#929991]">{data.note}</p>
+      <p className="text-xs leading-5 text-ink-3">{data.note}</p>
     </section>
   )
 }

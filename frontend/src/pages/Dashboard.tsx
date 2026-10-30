@@ -1,6 +1,6 @@
 import FatigueSimulator from '../components/Analytics/FatigueSimulator'
 import { useEffect, useState } from 'react'
-import type { FormEvent } from 'react'
+import type { CSSProperties, FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { logoutUser } from '../Services/auth'
 import { getTasks, createTask, updateTask, deleteTask } from '../Services/tasks'
@@ -10,6 +10,12 @@ import PersonalizedRecommendations from '../components/Analytics/PersonalizedRec
 import FeedbackAnalytics from '../components/Analytics/FeedbackAnalytics.tsx'
 import FocusSession from './FocusSession'
 import MLFatiguePrediction from '../components/Analytics/MLFatiguePrediction'
+import Icon, { Wordmark, type IconName } from '../components/Icon'
+import peaksArt from '../assets/art/peaks.webp'
+import readingArt from '../assets/art/reading.webp'
+import niesenCutout from '../assets/art/niesen-cutout.webp'
+import ProfileAvatar from '../components/ProfileAvatar'
+import lakeRangeArt from '../assets/art/lake-range.webp'
 
 
 import {
@@ -23,13 +29,24 @@ import type {
   DailyActivity,
 } from '../Services/analytics'
 
-const navigation = [
-  { icon: '▦', label: 'Overview' },
-  { icon: '✓', label: 'My tasks' },
-  { icon: '◷', label: 'Focus sessions' },
-  { icon: '▥', label: 'Work logs' },
-  { icon: '↗', label: 'Analytics' },
+const navigation: { icon: IconName; label: string }[] = [
+  { icon: 'overview', label: 'Overview' },
+  { icon: 'tasks', label: 'My tasks' },
+  { icon: 'focus', label: 'Focus sessions' },
+  { icon: 'logs', label: 'Work logs' },
+  { icon: 'analytics', label: 'Analytics' },
 ]
+
+const priorityChip = (priority: string) =>
+  priority === 'high' ? 'mb-chip--pink' : priority === 'medium' ? 'mb-chip--amber' : 'mb-chip--olive'
+
+const tagStyle = (color: string) => ({ '--tag': color }) as CSSProperties
+
+// Divider grid for metric cells: dashed rules between cells, two columns on small screens.
+const metricStrip4 =
+  'mb-card grid grid-cols-2 xl:grid-cols-4 [&>*]:border-dashed [&>*]:border-rule [&>*:nth-child(-n+2)]:border-b xl:[&>*:nth-child(-n+2)]:border-b-0 [&>*:nth-child(odd)]:border-r xl:[&>*:not(:last-child)]:border-r'
+const metricStrip3 =
+  'mb-card grid grid-cols-1 sm:grid-cols-3 [&>*]:border-dashed [&>*]:border-rule [&>*:not(:last-child)]:border-b sm:[&>*:not(:last-child)]:border-b-0 sm:[&>*:not(:last-child)]:border-r'
 
 const week = [
   { day: 'Mon', value: 48 },
@@ -274,54 +291,37 @@ function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f8f6]/60 text-[#202720]">
+    <div className="min-h-screen bg-canvas text-ink">
       {/* Desktop sidebar */}
-      <aside className="glass-nav fixed inset-y-0 left-0 z-20 hidden w-[248px] flex-col border-r px-5 py-7 lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-[248px] flex-col border-r border-dashed border-rule bg-canvas px-4 py-6 lg:flex">
         <a
           href="#dashboard"
-          className="mb-10 flex items-center gap-3"
+          className="mb-10 w-fit px-2"
           onClick={(event) => {
             event.preventDefault()
             setActivePage('Overview')
           }}
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#397858] text-xl font-bold text-white shadow-lg shadow-[#397858]/20">
-            M
-          </div>
-
-          <div>
-            <div className="font-[Manrope] text-xl font-extrabold tracking-tight">
-              mindblaze
-            </div>
-            <div className="text-[11px] tracking-wide text-[#858c85]">
-              WORK WITH BALANCE
-            </div>
-          </div>
+          <Wordmark />
         </a>
 
-        <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#9ba29b]">
-          Workspace
-        </p>
-
-        <nav className="space-y-1">
+        <nav className="space-y-0.5">
           {navigation.map((item) => (
             <button
               key={item.label}
               onClick={() => setActivePage(item.label)}
-              className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-sm font-medium ${
+              className={`flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left text-[15px] ${
                 activePage === item.label
-                  ? 'bg-[#eaf3ec]/90 text-[#2e704c] shadow-sm'
-                  : 'text-[#747c75] hover:bg-white/70 hover:text-[#29382d]'
+                  ? 'bg-wash text-ink'
+                  : 'text-ink-2 hover:bg-tray-2 hover:text-ink'
               }`}
             >
-              <span className="flex h-6 w-6 items-center justify-center text-lg">
-                {item.icon}
-              </span>
+              <Icon name={item.icon} className={activePage === item.label ? 'text-blue-ink' : 'text-ink-3'} />
 
               {item.label}
 
               {item.label === 'My tasks' && (
-                <span className="ml-auto rounded-md bg-white/80 px-2 py-0.5 text-xs text-[#6e786f]">
+                <span className="mb-mono ml-auto text-ink-3">
                   {remaining}
                 </span>
               )}
@@ -329,84 +329,77 @@ function Dashboard() {
           ))}
         </nav>
 
-        <div className="glass-panel mt-auto rounded-2xl !bg-white/55 p-4">
-          <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 text-lg">
-            ✳
+        <div className="mt-auto">
+          <div className="rounded-xl bg-tray-2 p-4">
+            <p className="text-sm font-medium">Make room to breathe</p>
+            <p className="mt-1 text-xs leading-5 text-ink-2">
+              Progress matters. So do the breaks between it.
+            </p>
+            <p className="mt-2 text-xs text-ink-3">
+              A little progress every day.
+            </p>
           </div>
-
-          <p className="text-sm font-semibold">Make room to breathe</p>
-          <p className="mt-1 text-xs leading-5 text-[#7c857d]">
-            Progress matters. So do the breaks between it.
-          </p>
-
-          <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[#e3eae1]">
-            <div className="h-full w-2/3 rounded-full bg-[#72a583]" />
-          </div>
-
-          <p className="mt-2 text-[10px] text-[#899189]">
-            A little progress every day.
-          </p>
         </div>
 
         {/* Workspace account and logout */}
-        <div className="mt-5 flex items-center gap-3 border-t border-[#edf0ec]/80 pt-5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e7eee5] font-semibold text-[#477454]">
-            P
-          </div>
+        <div className="mb-rule relative z-10 mt-5 flex items-center gap-3 px-1 pt-5">
+          <ProfileAvatar initial="P" />
 
           <div>
-            <p className="text-sm font-semibold">Your workspace</p>
-            <p className="text-xs text-[#858c85]">Personal account</p>
+            <p className="text-sm font-medium">Your workspace</p>
+            <p className="text-xs text-ink-3">Personal account</p>
           </div>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="ml-auto rounded-lg px-2 py-2 text-sm text-[#788078] hover:bg-white/80 hover:text-red-600"
+            aria-label="Logout"
+            className="ml-auto rounded-full p-2 text-ink-3 hover:bg-tray hover:text-danger"
             title="Sign out"
           >
-            Logout
+            <Icon name="logout" size={17} />
           </button>
         </div>
+
+        {/* Painted Niesen sitting on the bottom edge of the panel */}
+        <img
+          src={niesenCutout}
+          alt=""
+          className="pointer-events-none absolute -bottom-5 left-1/2 w-4/5 -translate-x-1/2 select-none opacity-50 [@media(max-height:640px)]:hidden"
+        />
       </aside>
 
       {/* Main content */}
-      <main className="min-h-screen lg:ml-[248px]">
-        <header className="glass-nav sticky top-0 z-10 flex h-[72px] items-center justify-between border-b px-5 sm:px-8 xl:px-10">
+      <main className="min-h-screen pb-20 lg:ml-[248px] lg:pb-0">
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-dashed border-rule bg-canvas px-5 sm:px-8 xl:px-10">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#397858] font-bold text-white lg:hidden">
-              M
-            </div>
+            <span className="lg:hidden">
+              <Wordmark compact />
+            </span>
 
             <div>
-              <p className="text-sm font-semibold">{activePage}</p>
-              <p className="text-xs text-[#8b928b]">
+              <p className="text-[15px] font-medium">{activePage}</p>
+              <p className="text-xs text-ink-3">
                 Your personal workspace
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="hidden rounded-full border border-white/80 bg-white/55 px-3 py-2 text-xs text-[#737d73] shadow-sm sm:inline-flex">
-              ✦ &nbsp; Your pace, your progress
-            </span>
-
-            <button
-              onClick={() => { setCreateTaskError(''); setIsCreateModalOpen(true) }}
-              className="flex h-10 items-center gap-2 rounded-xl bg-[#397858] px-4 text-sm font-semibold text-white shadow-md shadow-[#397858]/15 hover:bg-[#2c6447] hover:shadow-lg"
-            >
-              <span className="text-lg">+</span>
-              <span className="hidden sm:inline">New task</span>
-              <span className="sm:hidden">Task</span>
-            </button>
-          </div>
+          <button
+            onClick={() => { setCreateTaskError(''); setIsCreateModalOpen(true) }}
+            className={`mb-btn ${activePage === 'My tasks' ? 'invisible' : ''}`}
+          >
+            <Icon name="plus" size={16} />
+            <span className="hidden sm:inline">New task</span>
+            <span className="sm:hidden">Task</span>
+          </button>
         </header>
 
         <div
           id="dashboard"
-          className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8 sm:py-9 xl:px-10"
+          className="mx-auto max-w-[1280px] px-5 py-8 sm:px-8 sm:py-10 xl:px-10"
         >
-          
+
           {activePage === 'Analytics' ? (
             <AnalyticsPage
               analytics={analytics}
@@ -422,67 +415,68 @@ function Dashboard() {
             <WorkLogs tasks={tasks} />
           ) : activePage === 'My tasks' ? (
 
-            <section className="space-y-6">
+            <section className="space-y-8">
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.17em] text-[#5b8a67]">TASK WORKSPACE</p>
-                  <h1 className="font-[Manrope] text-3xl font-bold tracking-tight sm:text-[34px]">Task management</h1>
-                  <p className="mt-2 text-sm leading-6 text-[#7b837b]">Review task details, update progress, and manage priorities in one place.</p>
+                  <h1 className="mb-display">Task management. <span className="mb-quiet">One list.</span></h1>
+                  <p className="mt-2 text-base text-ink-2">Review task details, update progress, and manage priorities in one place.</p>
                 </div>
-                <button type="button" onClick={() => { setCreateTaskError(''); setIsCreateModalOpen(true) }} className="w-fit rounded-xl bg-[#397858] px-4 py-3 text-sm font-semibold text-white shadow-md hover:bg-[#2c6447]">+ Create task</button>
+                <button type="button" onClick={() => { setCreateTaskError(''); setIsCreateModalOpen(true) }} className="mb-btn w-fit"><Icon name="plus" size={16} />Create task</button>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <MetricCard label="All tasks" value={String(tasks.length)} note="Tasks in your workspace" icon="▤" />
-                <MetricCard label="Completed" value={String(completedTasks)} note="Successfully finished" icon="✓" />
-                <MetricCard label="In progress" value={String(remaining)} note="Still to be completed" icon="◷" />
+              <div className={metricStrip3}>
+                <MetricCard label="All tasks" value={String(tasks.length)} note="Tasks in your workspace" icon="tasks" />
+                <MetricCard label="Completed" value={String(completedTasks)} note="Successfully finished" icon="check" />
+                <MetricCard label="In progress" value={String(remaining)} note="Still to be completed" icon="focus" />
               </div>
 
-              <div className="glass-panel rounded-2xl p-5 sm:p-7">
+              <div className="mb-card p-5 sm:p-7">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <h2 className="font-[Manrope] text-lg font-bold">All tasks</h2>
-                    <p className="mt-1 text-sm text-[#858c85]">Select Edit to change details or Delete to remove a task.</p>
+                    <h2 className="mb-title">All tasks</h2>
+                    <p className="mt-1 text-sm text-ink-2">Select Edit to change details or Delete to remove a task.</p>
                   </div>
-                  <span className="rounded-full border border-white/80 bg-white/60 px-3 py-2 text-xs text-[#617462]">{tasks.length} total</span>
+                  <span className="mb-chip mb-num">{tasks.length} total</span>
                 </div>
 
                 {tasksLoading ? (
-                  <p className="py-10 text-center text-sm text-[#858c85]">Loading your tasks...</p>
+                  <p className="py-10 text-center text-sm text-ink-3">Loading your tasks...</p>
                 ) : tasks.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-[#dce6dc] bg-white/40 px-5 py-12 text-center">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#edf5ed] text-xl text-[#397858]">✓</div>
-                    <h3 className="mt-4 font-semibold">Your task list is clear</h3>
-                    <p className="mt-1 text-sm text-[#858c85]">Create a task to start planning your workload.</p>
-                    <button type="button" onClick={() => { setCreateTaskError(''); setIsCreateModalOpen(true) }} className="mt-5 rounded-xl bg-[#397858] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c6447]">Create your first task</button>
+                  <div className="grid items-center gap-6 rounded-xl bg-tray-2 p-5 sm:grid-cols-[220px_1fr] sm:p-6">
+                    <img src={readingArt} alt="" className="aspect-[4/3] w-full rounded-lg object-cover" />
+                    <div>
+                      <h3 className="mb-title">Your task list is clear</h3>
+                      <p className="mt-1 text-sm text-ink-2">Create a task to start planning your workload.</p>
+                      <button type="button" onClick={() => { setCreateTaskError(''); setIsCreateModalOpen(true) }} className="mb-btn mt-5">Create your first task</button>
+                    </div>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="divide-y divide-dashed divide-rule border-t border-dashed border-rule">
                     {tasks.map((task) => {
                       const done = task.status === 'completed'
                       const priority = task.priority.toLowerCase()
                       const updating = updatingTaskIds.includes(task.id)
                       return (
-                        <article key={task.id} className="rounded-2xl border border-white/90 bg-white/55 p-4 transition hover:border-[#cbdccb] hover:bg-white/80 sm:p-5">
+                        <article key={task.id} className="py-5">
                           <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                            <input type="checkbox" aria-label={`Mark ${task.title} ${done ? 'incomplete' : 'complete'}`} checked={done} disabled={updating} onChange={() => void handleToggleTask(task)} className="mt-1 h-[17px] w-[17px] shrink-0 accent-[#397858]" />
+                            <input type="checkbox" aria-label={`Mark ${task.title} ${done ? 'incomplete' : 'complete'}`} checked={done} disabled={updating} onChange={() => void handleToggleTask(task)} className="mt-1 h-[17px] w-[17px] shrink-0" />
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-wrap items-center gap-2">
-                                <h3 className={`break-words font-semibold ${done ? 'text-[#a0a69f] line-through' : 'text-[#333b34]'}`}>{task.title}</h3>
-                                <span className={`rounded-md px-2 py-1 text-[10px] font-semibold uppercase ${priority === 'high' ? 'bg-[#fceee8]/90 text-[#b65c40]' : priority === 'medium' ? 'bg-[#fbf3df]/90 text-[#9c7a2c]' : 'bg-[#edf3ed]/90 text-[#628067]'}`}>{task.priority} priority</span>
-                                <span className={`rounded-md px-2 py-1 text-[10px] font-semibold ${done ? 'bg-[#edf3ed] text-[#628067]' : 'bg-[#f2f2ed] text-[#737d73]'}`}>{done ? 'Completed' : 'Pending'}</span>
+                                <h3 className={`break-words text-base font-medium ${done ? 'text-ink-3 line-through' : 'text-ink'}`}>{task.title}</h3>
+                                <span className={`mb-chip ${priorityChip(priority)}`}>{task.priority} priority</span>
+                                <span className={`mb-chip ${done ? 'mb-chip--blue' : ''}`}>{done ? 'Completed' : 'Pending'}</span>
                               </div>
-                              <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[#7b837b]">{task.description || 'No description provided.'}</p>
-                              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#929991]">
+                              <p className="mt-1.5 max-w-[70ch] whitespace-pre-wrap break-words text-sm leading-6 text-ink-2">{task.description || 'No description provided.'}</p>
+                              <div className="mb-mono mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-ink-3">
                                 <span>Task ID: {task.id}</span>
                                 {task.estimated_minutes != null && <span>Estimated time: {task.estimated_minutes} min</span>}
                                 {task.due_at && <span>Due: {new Date(task.due_at).toLocaleString()}</span>}
-                                {updating && <span className="text-[#397858]">Saving status...</span>}
+                                {updating && <span className="text-blue-ink">Saving status...</span>}
                               </div>
                             </div>
                             <div className="flex shrink-0 gap-2 sm:justify-end">
-                              <button type="button" disabled={updating} onClick={() => openEditModal(task)} className="inline-flex items-center gap-2 rounded-xl border border-[#dce7dc] bg-white/80 px-3.5 py-2 text-sm font-semibold text-[#397858] hover:bg-[#eaf3ec] disabled:opacity-50"><span>✎</span> Edit</button>
-                              <button type="button" disabled={updating} onClick={() => { setTaskToDelete(task); setDeleteTaskError('') }} className="inline-flex items-center gap-2 rounded-xl border border-red-100 bg-white/80 px-3.5 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"><span>⌫</span> Delete</button>
+                              <button type="button" disabled={updating} onClick={() => openEditModal(task)} className="mb-btn-ghost mb-btn-sm"><Icon name="edit" size={15} /> Edit</button>
+                              <button type="button" disabled={updating} onClick={() => { setTaskToDelete(task); setDeleteTaskError('') }} className="mb-btn-ghost mb-btn-sm mb-btn-danger"><Icon name="trash" size={15} /> Delete</button>
                             </div>
                           </div>
                         </article>
@@ -490,7 +484,7 @@ function Dashboard() {
                     })}
                   </div>
                 )}
-                {tasksError && <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{tasksError}</p>}
+                {tasksError && <p role="alert" className="mb-alert mt-4">{tasksError}</p>}
               </div>
             </section>
           ) : (
@@ -498,74 +492,89 @@ function Dashboard() {
           {/* Welcome section */}
           <section className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.17em] text-[#5b8a67]">
-                YOUR SPACE TO THINK CLEARLY
-              </p>
-
-              <h1 className="font-[Manrope] text-3xl font-bold tracking-tight sm:text-[34px]">
-                A little progress goes a long way.
+              <h1 className="mb-display">
+                A little progress <span className="mb-quiet">goes a long way.</span>
               </h1>
 
-              <p className="mt-2 text-sm leading-6 text-[#7b837b]">
+              <p className="mt-2 text-base text-ink-2">
                 Organise your work, protect your focus, and make time to recharge.
               </p>
             </div>
 
-            <span className="w-fit rounded-full border border-white/90 bg-white/55 px-3.5 py-2 text-xs text-[#788078] shadow-sm backdrop-blur-lg">
-              LIVE TASKS · SAMPLE ANALYTICS
+            <span className="mb-chip w-fit">
+              Live tasks · Sample analytics
             </span>
           </section>
 
+          {/* Landscape band with live task tags */}
+          <section className="relative mb-6 h-[200px] overflow-hidden rounded-2xl bg-wash sm:h-[260px]">
+            <img src={peaksArt} alt="" className="absolute inset-0 h-full w-full object-cover object-[50%_22%]" />
+            <div aria-hidden="true">
+              <span className="mb-tag left-[11%] top-[27%]" style={tagStyle('var(--color-blue-ink)')}>
+                Completed <span className="mb-num">{completedTasks}/{tasks.length}</span>
+              </span>
+              <span className="mb-tag left-[76%] top-[30%] hidden sm:inline-flex" style={tagStyle('var(--color-violet-ink)')}>
+                Remaining <span className="mb-num">{remaining}</span>
+              </span>
+              <span className="mb-tag left-[41%] top-[30%]" style={tagStyle('var(--color-pink-ink)')}>
+                Focus <span className="mb-num">{formatTime(seconds)}</span>
+              </span>
+            </div>
+            <p className="absolute bottom-3 left-3 rounded-full bg-white/85 px-3 py-1 text-xs text-ink-2">
+              Ferdinand Hodler, <i>Eiger, Mönch and Jungfrau</i>, 1908
+            </p>
+          </section>
+
           {/* Summary cards */}
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <section className={metricStrip4}>
             <MetricCard
               label="Tasks completed"
               value={`${completedTasks}/${tasks.length}`}
               note="Saved in your workspace"
-              icon="✓"
+              icon="check"
             />
 
             <MetricCard
               label="Tasks remaining"
               value={String(remaining)}
               note="Tasks not yet completed"
-              icon="▤"
+              icon="tasks"
             />
 
             <MetricCard
               label="Focus timer"
               value="25 min"
               note="A fresh focus session"
-              icon="◷"
+              icon="focus"
             />
 
             <MetricCard
               label="Fatigue estimate"
               value="Not calculated"
-              note="Connect your work logs to begin"
-              icon="✳"
+              note="See Analytics for your estimate"
+              icon="spark"
             />
           </section>
 
           {/* Workload and focus */}
           <section className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[1.55fr_1fr]">
-            <div className="glass-panel rounded-2xl p-5 sm:p-6">
+            <div className="mb-card p-5 sm:p-6">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="font-[Manrope] text-lg font-bold">
+                  <h2 className="mb-title">
                     Workload overview
                   </h2>
-                  <p className="mt-1 text-sm text-[#858c85]">
+                  <p className="mt-1 text-sm text-ink-2">
                     A sample view of your weekly activity
                   </p>
                 </div>
 
-                <span className="rounded-lg border border-white/80 bg-white/60 px-3 py-2 text-xs font-medium text-[#617462]">
+                <span className="mb-chip">
                   This week
                 </span>
               </div>
 
-              <div className="mt-8 flex h-[190px] items-end justify-between gap-3 border-b border-[#edf0eb]/80 px-1 sm:gap-5">
+              <div className="mt-8 flex h-[190px] items-end justify-between gap-3 border-b border-dashed border-rule px-1 sm:gap-5">
                 {week.map((item) => (
                   <div
                     key={item.day}
@@ -573,66 +582,58 @@ function Dashboard() {
                   >
                     <div className="flex h-full w-full items-end justify-center">
                       <div
-                        className={`w-full max-w-[38px] rounded-t-lg transition-all duration-500 ${
+                        className={`w-full max-w-[38px] rounded-t-md transition-colors duration-200 ${
                           item.day === 'Thu'
-                            ? 'bg-[#397858] shadow-md shadow-[#397858]/15'
-                            : 'bg-[#dceade]/90 hover:bg-[#b8d4bd]'
+                            ? 'bg-blue'
+                            : 'bg-tray hover:bg-[#e2e2e2]'
                         }`}
                         style={{ height: `${item.value}%` }}
                         title={`${item.value} sample activity units`}
                       />
                     </div>
 
-                    <span className="mb-3 text-xs text-[#8b928b]">
+                    <span className="mb-mono mb-3 text-ink-3">
                       {item.day}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <p className="mt-4 text-xs leading-5 text-[#929991]">
+              <p className="mt-4 text-xs leading-5 text-ink-3">
                 Illustrative chart only. Real workload trends will appear after
                 analytics API integration.
               </p>
             </div>
 
             {/* Focus timer */}
-            <div className="glass-panel rounded-2xl p-5 sm:p-6">
+            <div className="mb-card flex flex-col p-5 sm:p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <h2 className="font-[Manrope] text-lg font-bold">
+                  <h2 className="mb-title">
                     Focus room
                   </h2>
-                  <p className="mt-1 text-sm text-[#858c85]">
+                  <p className="mt-1 text-sm text-ink-2">
                     One thing at a time.
                   </p>
                 </div>
 
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/80 bg-[#edf5ed]/80 text-xl text-[#397858]">
-                  ◷
-                </div>
+                <Icon name="focus" size={20} className="text-ink-3" />
               </div>
 
-              <div className="my-7 flex flex-col items-center rounded-2xl border border-white/80 bg-white/35 px-4 py-6">
-                <div className="relative flex h-36 w-36 items-center justify-center rounded-full border-[7px] border-[#dfecdf]/90 shadow-inner shadow-[#397858]/5">
-                  <div className="absolute inset-1 rounded-full border border-dashed border-[#c5d9c6]" />
-
-                  <div className="text-center">
-                    <div className="font-[Manrope] text-3xl font-bold tracking-tight">
-                      {formatTime(seconds)}
-                    </div>
-
-                    <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#7b897c]">
-                      {seconds === 0
-                        ? 'Session complete'
-                        : timerRunning
-                          ? 'Stay present'
-                          : 'Ready when you are'}
-                    </div>
-                  </div>
+              <div className="my-6 flex flex-1 flex-col items-center justify-center rounded-xl bg-tray-2 px-4 py-7">
+                <div className="mb-num text-[64px] leading-none">
+                  {formatTime(seconds)}
                 </div>
 
-                <p className="mt-4 text-center text-xs text-[#818a81]">
+                <div className="mt-3 text-sm text-ink-2">
+                  {seconds === 0
+                    ? 'Session complete'
+                    : timerRunning
+                      ? 'Stay present'
+                      : 'Ready when you are'}
+                </div>
+
+                <p className="mt-4 text-center text-xs text-ink-3">
                   Suggested focus interval · 25 minutes
                 </p>
               </div>
@@ -641,20 +642,20 @@ function Dashboard() {
                 <button
                   onClick={() => setTimerRunning((running) => !running)}
                   disabled={seconds === 0}
-                  className="flex-1 rounded-xl bg-[#397858] px-4 py-3 text-sm font-semibold text-white shadow-md shadow-[#397858]/15 hover:bg-[#2c6447] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mb-btn flex-1"
                 >
                   {timerRunning ? 'Pause session' : 'Start focusing'}
                 </button>
 
                 <button
                   onClick={resetTimer}
-                  className="rounded-xl border border-white/90 bg-white/55 px-4 py-3 text-sm font-medium text-[#657065] hover:bg-white/85"
+                  className="mb-btn-ghost"
                 >
                   Reset
                 </button>
               </div>
 
-              <p className="mt-3 text-center text-[11px] text-[#9aa199]">
+              <p className="mt-3 text-center text-xs text-ink-3">
                 Preview timer only · Sessions are not saved yet
               </p>
             </div>
@@ -662,32 +663,32 @@ function Dashboard() {
 
           {/* Tasks and wellbeing */}
           <section className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[1.55fr_1fr]">
-            <div className="glass-panel rounded-2xl p-5 sm:p-6">
+            <div className="mb-card p-5 sm:p-6">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h2 className="font-[Manrope] text-lg font-bold">
+                  <h2 className="mb-title">
                     Your tasks
                   </h2>
-                  <p className="mt-1 text-sm text-[#858c85]">
+                  <p className="mt-1 text-sm text-ink-2">
                     Small steps make meaningful progress.
                   </p>
                 </div>
 
                 <button
                   onClick={() => setActivePage('My tasks')}
-                  className="text-sm font-semibold text-[#397858] hover:underline"
+                  className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-medium text-ink hover:text-blue-ink"
                 >
-                  View all →
+                  View all <Icon name="arrow" size={15} />
                 </button>
               </div>
 
-              <div className="mt-5 divide-y divide-[#edf0eb]/80">
+              <div className="mt-5 divide-y divide-dashed divide-rule">
                 {tasksLoading ? (
-                  <p className="py-6 text-sm text-[#858c85]">Loading your tasks...</p>
+                  <p className="py-6 text-sm text-ink-3">Loading your tasks...</p>
                 ) : tasks.length === 0 ? (
                   <div className="py-6">
-                    <p className="text-sm text-[#858c85]">No tasks yet. Create your first task to get started.</p>
-                    {tasksError && <p role="alert" className="mt-2 text-sm text-red-600">{tasksError}</p>}
+                    <p className="text-sm text-ink-2">No tasks yet. Create your first task to get started.</p>
+                    {tasksError && <p role="alert" className="mb-alert mt-3">{tasksError}</p>}
                   </div>
                 ) : (
                   tasks.map((task) => {
@@ -695,7 +696,7 @@ function Dashboard() {
                     const priority = task.priority.toLowerCase()
                     const updating = updatingTaskIds.includes(task.id)
                     return (
-                      <div key={task.id} className="flex items-center gap-3 py-4">
+                      <div key={task.id} className="flex items-center gap-3 py-3.5">
                         <input
                           type="checkbox"
                           aria-label={`Mark ${task.title} ${done ? 'incomplete' : 'complete'}`}
@@ -705,13 +706,13 @@ function Dashboard() {
                           className="h-[17px] w-[17px] shrink-0"
                         />
                         <div className="min-w-0 flex-1">
-                          <p className={`truncate text-sm font-medium ${done ? 'text-[#a0a69f] line-through' : 'text-[#333b34]'}`}>{task.title}</p>
-                          <p className="mt-1 text-xs text-[#929991]">{task.description || 'General task'}{updating ? ' · Saving...' : ''}</p>
+                          <p className={`truncate text-[15px] font-medium ${done ? 'text-ink-3 line-through' : 'text-ink'}`}>{task.title}</p>
+                          <p className="mt-0.5 truncate text-xs text-ink-3">{task.description || 'General task'}{updating ? ' · Saving...' : ''}</p>
                         </div>
-                        <span className={`rounded-md px-2 py-1 text-[10px] font-semibold ${priority === 'high' ? 'bg-[#fceee8]/90 text-[#b65c40]' : priority === 'medium' ? 'bg-[#fbf3df]/90 text-[#9c7a2c]' : 'bg-[#edf3ed]/90 text-[#628067]'}`}>{task.priority}</span>
-                        <div className="flex shrink-0 items-center gap-1">
-                          <button type="button" disabled={updating} onClick={() => openEditModal(task)} className="rounded-lg px-2 py-1.5 text-xs font-semibold text-[#397858] hover:bg-[#eaf3ec] disabled:opacity-50" aria-label={`Edit ${task.title}`}>Edit</button>
-                          <button type="button" disabled={updating} onClick={() => { setTaskToDelete(task); setDeleteTaskError('') }} className="rounded-lg px-2 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50" aria-label={`Delete ${task.title}`}>Delete</button>
+                        <span className={`mb-chip ${priorityChip(priority)}`}>{task.priority}</span>
+                        <div className="flex shrink-0 items-center gap-0.5">
+                          <button type="button" disabled={updating} onClick={() => openEditModal(task)} className="rounded-full p-2 text-ink-3 hover:bg-tray hover:text-ink disabled:opacity-40" aria-label={`Edit ${task.title}`}><Icon name="edit" size={16} /></button>
+                          <button type="button" disabled={updating} onClick={() => { setTaskToDelete(task); setDeleteTaskError('') }} className="rounded-full p-2 text-ink-3 hover:bg-tray hover:text-danger disabled:opacity-40" aria-label={`Delete ${task.title}`}><Icon name="trash" size={16} /></button>
                         </div>
                       </div>
                     )
@@ -719,44 +720,47 @@ function Dashboard() {
                 )}
               </div>
 
-              {tasksError && tasks.length > 0 && <p role="alert" className="mt-3 text-xs text-red-600">{tasksError}</p>}
-              <p className="mt-2 text-[11px] text-[#9aa199]">Tasks are saved to your MindBlaze account.</p>
+              {tasksError && tasks.length > 0 && <p role="alert" className="mb-alert mt-3">{tasksError}</p>}
+              <p className="mt-3 text-xs text-ink-3">Tasks are saved to your MindBlaze account.</p>
             </div>
 
             {/* Wellbeing card */}
-            <div className="glass-panel rounded-2xl p-5 sm:p-6">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/80 bg-[#f0f4e8]/80 text-xl">
-                ✳
-              </div>
+            <div className="mb-card overflow-hidden">
+              <img src={readingArt} alt="" className="h-40 w-full object-cover object-[50%_35%]" />
 
-              <h2 className="mt-4 font-[Manrope] text-lg font-bold">
-                Your wellbeing matters
-              </h2>
+              <div className="p-5 sm:p-6">
+                <h2 className="mb-title">
+                  Your wellbeing matters
+                </h2>
 
-              <p className="mt-2 text-sm leading-6 text-[#7b837b]">
-                A full task list doesn't mean you have to do everything at once.
-                Try taking a short break between demanding activities.
-              </p>
-
-              <div className="mt-5 rounded-xl border border-white/90 bg-[#f8faf6]/65 p-4">
-                <p className="text-sm font-semibold text-[#426b4b]">
-                  A gentle reminder
+                <p className="mt-2 text-sm leading-6 text-ink-2">
+                  A full task list doesn't mean you have to do everything at once.
+                  Try taking a short break between demanding activities.
                 </p>
 
-                <p className="mt-1 text-xs leading-5 text-[#7c857b]">
-                  Check in with yourself, notice interruptions, and make room
-                  for rest when you need it.
+                <div className="mb-note mt-5">
+                  <p className="font-medium">
+                    A gentle reminder
+                  </p>
+
+                  <p className="mt-1 text-xs leading-5 text-ink-2">
+                    Check in with yourself, notice interruptions, and make room
+                    for rest when you need it.
+                  </p>
+                </div>
+
+                <p className="mt-4 text-xs leading-5 text-ink-3">
+                  MindBlaze fatigue estimates are experimental indicators, not
+                  medical diagnoses.
+                </p>
+                <p className="mt-1 text-xs text-ink-3">
+                  Art: Carl Larsson, <i>Holiday Reading</i>, 1916
                 </p>
               </div>
-
-              <p className="mt-4 text-[10px] leading-4 text-[#969e95]">
-                MindBlaze fatigue estimates are experimental indicators, not
-                medical diagnoses.
-              </p>
             </div>
           </section>
 
-          <footer className="py-8 text-center text-xs text-[#9aa199]">
+          <footer className="mb-rule mt-10 py-8 text-center text-xs text-ink-3">
             MindBlaze · Work thoughtfully. Rest intentionally.
           </footer>
             </>
@@ -767,52 +771,51 @@ function Dashboard() {
       {/* Create task modal */}
       {isCreateModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#17251c]/40 px-4 py-6 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 px-4 py-6"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget && !isCreatingTask) setIsCreateModalOpen(false)
           }}
         >
-          <section role="dialog" aria-modal="true" aria-labelledby="create-task-title" className="glass-panel w-full max-w-lg rounded-3xl border border-white/80 bg-[#f9fbf8] p-6 shadow-2xl sm:p-8">
+          <section role="dialog" aria-modal="true" aria-labelledby="create-task-title" className="w-full max-w-lg rounded-2xl bg-canvas p-6 shadow-[var(--shadow-dialog)] sm:p-8">
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#5b8a67]">MAKE A LITTLE PROGRESS</p>
-                <h2 id="create-task-title" className="mt-2 font-[Manrope] text-2xl font-bold">Create a task</h2>
-                <p className="mt-1 text-sm text-[#858c85]">Add the details and we'll save it to your workspace.</p>
+                <h2 id="create-task-title" className="mb-title !text-2xl">Create a task</h2>
+                <p className="mt-1 text-sm text-ink-2">Add the details and we'll save it to your workspace.</p>
               </div>
-              <button type="button" aria-label="Close dialog" disabled={isCreatingTask} onClick={() => setIsCreateModalOpen(false)} className="rounded-xl px-3 py-2 text-xl text-[#788078] hover:bg-white disabled:opacity-50">×</button>
+              <button type="button" aria-label="Close dialog" disabled={isCreatingTask} onClick={() => setIsCreateModalOpen(false)} className="rounded-full p-2 text-ink-3 hover:bg-tray hover:text-ink disabled:opacity-40"><Icon name="close" /></button>
             </div>
 
             <form onSubmit={handleCreateTask} className="space-y-5">
               <div>
-                <label htmlFor="task-title" className="mb-2 block text-sm font-semibold text-[#39443b]">Task title <span className="text-red-500">*</span></label>
-                <input id="task-title" autoFocus required maxLength={200} value={newTaskTitle} onChange={(event) => setNewTaskTitle(event.target.value)} placeholder="e.g. Complete MindBlaze API integration" className="w-full rounded-xl border border-[#e2e9e1] bg-white/80 px-4 py-3 text-sm outline-none transition focus:border-[#72a583] focus:ring-4 focus:ring-[#397858]/10" />
+                <label htmlFor="task-title" className="mb-label">Task title <span className="text-danger">*</span></label>
+                <input id="task-title" autoFocus required maxLength={200} value={newTaskTitle} onChange={(event) => setNewTaskTitle(event.target.value)} placeholder="e.g. Complete MindBlaze API integration" className="mb-input" />
               </div>
 
               <div>
-                <label htmlFor="task-description" className="mb-2 block text-sm font-semibold text-[#39443b]">Description <span className="font-normal text-[#929991]">(optional)</span></label>
-                <textarea id="task-description" rows={3} maxLength={2000} value={newTaskDescription} onChange={(event) => setNewTaskDescription(event.target.value)} placeholder="What needs to be done?" className="w-full resize-y rounded-xl border border-[#e2e9e1] bg-white/80 px-4 py-3 text-sm outline-none transition focus:border-[#72a583] focus:ring-4 focus:ring-[#397858]/10" />
+                <label htmlFor="task-description" className="mb-label">Description <span className="font-normal text-ink-3">(optional)</span></label>
+                <textarea id="task-description" rows={3} maxLength={2000} value={newTaskDescription} onChange={(event) => setNewTaskDescription(event.target.value)} placeholder="What needs to be done?" className="mb-input resize-y" />
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="task-priority" className="mb-2 block text-sm font-semibold text-[#39443b]">Priority</label>
-                  <select id="task-priority" value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="w-full rounded-xl border border-[#e2e9e1] bg-white/80 px-4 py-3 text-sm outline-none focus:border-[#72a583] focus:ring-4 focus:ring-[#397858]/10">
+                  <label htmlFor="task-priority" className="mb-label">Priority</label>
+                  <select id="task-priority" value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="mb-input">
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
                     <option value="High">High</option>
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="task-minutes" className="mb-2 block text-sm font-semibold text-[#39443b]">Estimated minutes</label>
-                  <input id="task-minutes" type="number" min="1" max="1440" value={newTaskMinutes} onChange={(event) => setNewTaskMinutes(event.target.value)} placeholder="25" className="w-full rounded-xl border border-[#e2e9e1] bg-white/80 px-4 py-3 text-sm outline-none focus:border-[#72a583] focus:ring-4 focus:ring-[#397858]/10" />
+                  <label htmlFor="task-minutes" className="mb-label">Estimated minutes</label>
+                  <input id="task-minutes" type="number" min="1" max="1440" value={newTaskMinutes} onChange={(event) => setNewTaskMinutes(event.target.value)} placeholder="25" className="mb-input mb-num" />
                 </div>
               </div>
 
-              {createTaskError && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{createTaskError}</p>}
+              {createTaskError && <p role="alert" className="mb-alert">{createTaskError}</p>}
 
               <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:justify-end">
-                <button type="button" disabled={isCreatingTask} onClick={() => setIsCreateModalOpen(false)} className="rounded-xl border border-[#e2e9e1] bg-white/70 px-5 py-3 text-sm font-semibold text-[#657065] hover:bg-white disabled:opacity-50">Cancel</button>
-                <button type="submit" disabled={isCreatingTask || !newTaskTitle.trim()} className="rounded-xl bg-[#397858] px-5 py-3 text-sm font-semibold text-white shadow-md shadow-[#397858]/15 hover:bg-[#2c6447] disabled:cursor-not-allowed disabled:opacity-60">{isCreatingTask ? 'Saving task...' : 'Create task'}</button>
+                <button type="button" disabled={isCreatingTask} onClick={() => setIsCreateModalOpen(false)} className="mb-btn-ghost">Cancel</button>
+                <button type="submit" disabled={isCreatingTask || !newTaskTitle.trim()} className="mb-btn">{isCreatingTask ? 'Saving task...' : 'Create task'}</button>
               </div>
             </form>
           </section>
@@ -821,41 +824,40 @@ function Dashboard() {
 
       {/* Edit task modal */}
       {editingTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#17251c]/40 px-4 py-6 backdrop-blur-sm" onMouseDown={(event) => { if (event.target === event.currentTarget && !isSavingEdit) setEditingTask(null) }}>
-          <section role="dialog" aria-modal="true" aria-labelledby="edit-task-title" className="glass-panel max-h-full w-full max-w-lg overflow-y-auto rounded-3xl border border-white/80 bg-[#f9fbf8] p-6 shadow-2xl sm:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 px-4 py-6" onMouseDown={(event) => { if (event.target === event.currentTarget && !isSavingEdit) setEditingTask(null) }}>
+          <section role="dialog" aria-modal="true" aria-labelledby="edit-task-title" className="max-h-full w-full max-w-lg overflow-y-auto rounded-2xl bg-canvas p-6 shadow-[var(--shadow-dialog)] sm:p-8">
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#5b8a67]">KEEP MAKING PROGRESS</p>
-                <h2 id="edit-task-title" className="mt-2 font-[Manrope] text-2xl font-bold">Edit task</h2>
-                <p className="mt-1 text-sm text-[#858c85]">Update the details of this task.</p>
+                <h2 id="edit-task-title" className="mb-title !text-2xl">Edit task</h2>
+                <p className="mt-1 text-sm text-ink-2">Update the details of this task.</p>
               </div>
-              <button type="button" aria-label="Close dialog" disabled={isSavingEdit} onClick={() => setEditingTask(null)} className="rounded-xl px-3 py-2 text-xl text-[#788078] hover:bg-white disabled:opacity-50">×</button>
+              <button type="button" aria-label="Close dialog" disabled={isSavingEdit} onClick={() => setEditingTask(null)} className="rounded-full p-2 text-ink-3 hover:bg-tray hover:text-ink disabled:opacity-40"><Icon name="close" /></button>
             </div>
             <form onSubmit={handleEditTask} className="space-y-5">
               <div>
-                <label htmlFor="edit-task-title-input" className="mb-2 block text-sm font-semibold text-[#39443b]">Task title *</label>
-                <input id="edit-task-title-input" required maxLength={200} value={editTitle} onChange={(event) => setEditTitle(event.target.value)} className="w-full rounded-xl border border-[#e2e9e1] bg-white/80 px-4 py-3 text-sm outline-none focus:border-[#72a583] focus:ring-4 focus:ring-[#397858]/10" />
+                <label htmlFor="edit-task-title-input" className="mb-label">Task title *</label>
+                <input id="edit-task-title-input" required maxLength={200} value={editTitle} onChange={(event) => setEditTitle(event.target.value)} className="mb-input" />
               </div>
               <div>
-                <label htmlFor="edit-task-description" className="mb-2 block text-sm font-semibold text-[#39443b]">Description</label>
-                <textarea id="edit-task-description" rows={3} maxLength={2000} value={editDescription} onChange={(event) => setEditDescription(event.target.value)} className="w-full resize-y rounded-xl border border-[#e2e9e1] bg-white/80 px-4 py-3 text-sm outline-none focus:border-[#72a583] focus:ring-4 focus:ring-[#397858]/10" />
+                <label htmlFor="edit-task-description" className="mb-label">Description</label>
+                <textarea id="edit-task-description" rows={3} maxLength={2000} value={editDescription} onChange={(event) => setEditDescription(event.target.value)} className="mb-input resize-y" />
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="edit-task-priority" className="mb-2 block text-sm font-semibold text-[#39443b]">Priority</label>
-                  <select id="edit-task-priority" value={editPriority} onChange={(event) => setEditPriority(event.target.value)} className="w-full rounded-xl border border-[#e2e9e1] bg-white/80 px-4 py-3 text-sm outline-none focus:border-[#72a583] focus:ring-4 focus:ring-[#397858]/10">
+                  <label htmlFor="edit-task-priority" className="mb-label">Priority</label>
+                  <select id="edit-task-priority" value={editPriority} onChange={(event) => setEditPriority(event.target.value)} className="mb-input">
                     <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option>
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="edit-task-minutes" className="mb-2 block text-sm font-semibold text-[#39443b]">Estimated minutes</label>
-                  <input id="edit-task-minutes" type="number" min="1" max="1440" value={editMinutes} onChange={(event) => setEditMinutes(event.target.value)} className="w-full rounded-xl border border-[#e2e9e1] bg-white/80 px-4 py-3 text-sm outline-none focus:border-[#72a583] focus:ring-4 focus:ring-[#397858]/10" />
+                  <label htmlFor="edit-task-minutes" className="mb-label">Estimated minutes</label>
+                  <input id="edit-task-minutes" type="number" min="1" max="1440" value={editMinutes} onChange={(event) => setEditMinutes(event.target.value)} className="mb-input mb-num" />
                 </div>
               </div>
-              {editTaskError && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{editTaskError}</p>}
+              {editTaskError && <p role="alert" className="mb-alert">{editTaskError}</p>}
               <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:justify-end">
-                <button type="button" disabled={isSavingEdit} onClick={() => setEditingTask(null)} className="rounded-xl border border-[#e2e9e1] bg-white/70 px-5 py-3 text-sm font-semibold text-[#657065] hover:bg-white disabled:opacity-50">Cancel</button>
-                <button type="submit" disabled={isSavingEdit || !editTitle.trim()} className="rounded-xl bg-[#397858] px-5 py-3 text-sm font-semibold text-white hover:bg-[#2c6447] disabled:cursor-not-allowed disabled:opacity-60">{isSavingEdit ? 'Saving changes...' : 'Save changes'}</button>
+                <button type="button" disabled={isSavingEdit} onClick={() => setEditingTask(null)} className="mb-btn-ghost">Cancel</button>
+                <button type="submit" disabled={isSavingEdit || !editTitle.trim()} className="mb-btn">{isSavingEdit ? 'Saving changes...' : 'Save changes'}</button>
               </div>
             </form>
           </section>
@@ -864,33 +866,33 @@ function Dashboard() {
 
       {/* Delete confirmation modal */}
       {taskToDelete && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#17251c]/45 px-4 py-6 backdrop-blur-sm" onMouseDown={(event) => { if (event.target === event.currentTarget && !isDeletingTask) setTaskToDelete(null) }}>
-          <section role="alertdialog" aria-modal="true" aria-labelledby="delete-task-title" className="glass-panel w-full max-w-md rounded-3xl border border-white/80 bg-[#f9fbf8] p-6 shadow-2xl sm:p-8">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-xl text-red-600">!</div>
-            <h2 id="delete-task-title" className="mt-4 font-[Manrope] text-xl font-bold">Delete this task?</h2>
-            <p className="mt-2 text-sm leading-6 text-[#7b837b]">You're about to delete <strong className="text-[#333b34]">{taskToDelete.title}</strong>. This action cannot be undone.</p>
-            {deleteTaskError && <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{deleteTaskError}</p>}
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/25 px-4 py-6" onMouseDown={(event) => { if (event.target === event.currentTarget && !isDeletingTask) setTaskToDelete(null) }}>
+          <section role="alertdialog" aria-modal="true" aria-labelledby="delete-task-title" className="w-full max-w-md rounded-2xl bg-canvas p-6 shadow-[var(--shadow-dialog)] sm:p-8">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[rgb(196_47_58/0.08)] text-danger"><Icon name="trash" size={20} /></div>
+            <h2 id="delete-task-title" className="mb-title mt-4">Delete this task?</h2>
+            <p className="mt-2 text-sm leading-6 text-ink-2">You're about to delete <strong className="font-medium text-ink">{taskToDelete.title}</strong>. This action cannot be undone.</p>
+            {deleteTaskError && <p role="alert" className="mb-alert mt-4">{deleteTaskError}</p>}
             <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-              <button type="button" disabled={isDeletingTask} onClick={() => setTaskToDelete(null)} className="rounded-xl border border-[#e2e9e1] bg-white/70 px-5 py-3 text-sm font-semibold text-[#657065] hover:bg-white disabled:opacity-50">Cancel</button>
-              <button type="button" disabled={isDeletingTask} onClick={() => void handleDeleteTask()} className="rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">{isDeletingTask ? 'Deleting...' : 'Delete task'}</button>
+              <button type="button" disabled={isDeletingTask} onClick={() => setTaskToDelete(null)} className="mb-btn-ghost">Cancel</button>
+              <button type="button" disabled={isDeletingTask} onClick={() => void handleDeleteTask()} className="mb-btn !bg-danger hover:!bg-[#a5252f]">{isDeletingTask ? 'Deleting...' : 'Delete task'}</button>
             </div>
           </section>
         </div>
       )}
 
       {/* Mobile bottom navigation */}
-      <nav className="glass-nav fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t px-1 py-2 lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t border-dashed border-rule bg-canvas px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 lg:hidden">
         {navigation.map((item) => (
           <button
             key={item.label}
             onClick={() => setActivePage(item.label)}
-            className={`flex flex-col items-center gap-1 rounded-lg py-1 text-[10px] ${
+            className={`flex flex-col items-center gap-1 rounded-lg py-1 text-[11px] ${
               activePage === item.label
-                ? 'font-semibold text-[#397858]'
-                : 'text-[#818981]'
+                ? 'font-medium text-ink'
+                : 'text-ink-3'
             }`}
           >
-            <span className="text-lg">{item.icon}</span>
+            <Icon name={item.icon} size={20} className={activePage === item.label ? 'text-blue-ink' : ''} />
 
             <span>
               {item.label === 'Focus sessions'
@@ -940,80 +942,105 @@ function AnalyticsPage({
       )
     : []
 
+  // Display-only: the factor scores the estimate already returned, drawn as tags over the band.
+  const factorTags = Object.entries(
+    (fatigueEstimate?.factors ?? {}) as Record<string, number>,
+  ).slice(0, 4)
+  const tagSpots = [
+    { color: 'var(--color-blue-ink)', spot: 'left-[12%] top-[46%]' },
+    { color: 'var(--color-violet-ink)', spot: 'left-[64%] top-[44%]' },
+    { color: 'var(--color-pink-ink)', spot: 'left-[36%] top-[36%]' },
+    { color: 'var(--color-amber-ink)', spot: 'left-[84%] top-[52%]' },
+  ]
+
   return (
     <section className="space-y-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.17em] text-[#5b8a67]">
-            YOUR WORK PATTERNS
-          </p>
-          <h1 className="font-[Manrope] text-3xl font-bold tracking-tight sm:text-[34px]">
-            Analytics overview
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-[#7b837b]">
+          <h1 className="mb-display">Analytics overview. <span className="mb-quiet">Your patterns.</span></h1>
+          <p className="mt-2 text-base text-ink-2">
             Understand your workload, focus time, breaks, and interruptions.
           </p>
         </div>
-        <span className="w-fit rounded-full border border-white/90 bg-white/55 px-3.5 py-2 text-xs text-[#788078] shadow-sm">
+        <span className="mb-chip mb-chip--blue w-fit">
           Live data · Your account
         </span>
       </div>
 
       {loading ? (
-        <div className="glass-panel rounded-2xl p-8 text-center text-sm text-[#858c85]">
+        <div className="mb-card p-8 text-center text-sm text-ink-3">
           Loading your analytics...
         </div>
       ) : error ? (
-        <div className="glass-panel rounded-2xl p-6">
-          <p role="alert" className="text-sm text-red-700">{error}</p>
-          <p className="mt-2 text-xs text-[#858c85]">
+        <div className="mb-card p-6">
+          <p role="alert" className="mb-alert">{error}</p>
+          <p className="mt-3 text-sm text-ink-2">
             Check that the backend is running and that you are logged in.
           </p>
           <button
             type="button"
             onClick={onRetry}
-            className="mt-4 rounded-xl bg-[#397858] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2c6447]"
+            className="mb-btn mt-4"
           >
             Reload analytics
           </button>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <MetricCard label="Total tasks" value={String(analytics?.total_tasks ?? 0)} note="Tasks in your workspace" icon="▤" />
-            <MetricCard label="Completed" value={String(analytics?.completed_tasks ?? 0)} note="Successfully finished" icon="✓" />
-            <MetricCard label="Pending tasks" value={String(analytics?.pending_tasks ?? 0)} note={`${analytics?.estimated_pending_minutes ?? 0} estimated minutes remaining`} icon="◷" />
-            <MetricCard label="Completion rate" value={`${analytics?.completion_rate_percent ?? 0}%`} note="Completed tasks out of all tasks" icon="↗" />
+          <div className="relative h-[180px] overflow-hidden rounded-2xl bg-wash sm:h-[220px]">
+            <img src={lakeRangeArt} alt="" className="absolute inset-0 h-full w-full object-cover object-[30%_60%]" />
+            <div aria-hidden="true">
+              {factorTags.map(([factor, score], index) => (
+                <span
+                  key={factor}
+                  className={`mb-tag ${tagSpots[index].spot} ${index > 1 ? 'hidden sm:inline-flex' : ''}`}
+                  style={tagStyle(tagSpots[index].color)}
+                >
+                  <span className="first-letter:uppercase">{factor.replace(/_/g, ' ')}</span>
+                  <span className="mb-num">{displayValue(score)}</span>
+                </span>
+              ))}
+            </div>
+            <p className="absolute bottom-3 left-3 rounded-full bg-white/85 px-3 py-1 text-xs text-ink-2">
+              Ferdinand Hodler, <i>Lake Thun with the Stockhorn Range</i>, 1910
+            </p>
+          </div>
+
+          <div className={metricStrip4}>
+            <MetricCard label="Total tasks" value={String(analytics?.total_tasks ?? 0)} note="Tasks in your workspace" icon="tasks" />
+            <MetricCard label="Completed" value={String(analytics?.completed_tasks ?? 0)} note="Successfully finished" icon="check" />
+            <MetricCard label="Pending tasks" value={String(analytics?.pending_tasks ?? 0)} note={`${analytics?.estimated_pending_minutes ?? 0} estimated minutes remaining`} icon="focus" />
+            <MetricCard label="Completion rate" value={`${analytics?.completion_rate_percent ?? 0}%`} note="Completed tasks out of all tasks" icon="analytics" />
           </div>
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.4fr_1fr]">
-            <div className="glass-panel rounded-2xl p-5 sm:p-6">
+            <div className="mb-card p-5 sm:p-6">
               <div>
-                <h2 className="font-[Manrope] text-lg font-bold">Daily work activity</h2>
-                <p className="mt-1 text-sm text-[#858c85]">Work minutes over the last seven days</p>
+                <h2 className="mb-title">Daily work activity</h2>
+                <p className="mt-1 text-sm text-ink-2">Work minutes over the last seven days</p>
               </div>
 
               {dailyActivity.length === 0 ? (
-                <p className="py-12 text-center text-sm text-[#858c85]">No daily activity data is available yet.</p>
+                <p className="py-12 text-center text-sm text-ink-3">No daily activity data is available yet.</p>
               ) : (
-                <div className="mt-8 flex h-[220px] items-end justify-between gap-2 border-b border-[#edf0eb]/80 px-1 sm:gap-4">
+                <div className="mt-8 flex h-[220px] items-end justify-between gap-2 border-b border-dashed border-rule px-1 sm:gap-4">
                   {dailyActivity.map((day) => {
                     const height = day.work_minutes > 0
                       ? Math.max(5, (day.work_minutes / maxWorkMinutes) * 100)
                       : 2
                     return (
                       <div key={day.date} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-3">
-                        <span className="text-[10px] text-[#7b837b] sm:text-xs">
+                        <span className="mb-num text-[11px] text-ink-2 sm:text-xs">
                           {day.work_minutes}
                         </span>
                         <div className="flex h-full w-full items-end justify-center">
                           <div
-                            className="w-full max-w-[38px] rounded-t-lg bg-[#72a583] transition-all hover:bg-[#397858]"
+                            className="w-full max-w-[38px] rounded-t-md bg-blue transition-colors hover:bg-blue-ink"
                             style={{ height: `${height}%` }}
                             title={`${day.work_minutes} work minutes`}
                           />
                         </div>
-                        <span className="mb-3 text-[10px] text-[#8b928b] sm:text-xs">
+                        <span className="mb-mono mb-3 text-ink-3">
                           {new Date(`${day.date}T12:00:00`).toLocaleDateString(undefined, { weekday: 'short' })}
                         </span>
                       </div>
@@ -1021,54 +1048,54 @@ function AnalyticsPage({
                   })}
                 </div>
               )}
-              <p className="mt-4 text-xs text-[#929991]">Bars show completed work time after subtracting recorded breaks.</p>
+              <p className="mt-4 text-xs text-ink-3">Bars show completed work time after subtracting recorded breaks.</p>
             </div>
 
-            <div className="glass-panel rounded-2xl p-5 sm:p-6">
-              <h2 className="font-[Manrope] text-lg font-bold">Focus & recovery</h2>
-              <p className="mt-1 text-sm text-[#858c85]">Totals from your saved work logs</p>
-              <div className="mt-5 space-y-3">
-                <div className="flex items-center justify-between rounded-xl bg-white/55 p-4">
-                  <span className="text-sm text-[#7b837b]">Actual focus time</span>
-                  <strong className="text-sm">{analytics?.actual_focus_minutes ?? 0} min</strong>
+            <div className="mb-card p-5 sm:p-6">
+              <h2 className="mb-title">Focus & recovery</h2>
+              <p className="mt-1 text-sm text-ink-2">Totals from your saved work logs</p>
+              <dl className="mt-5 divide-y divide-dashed divide-rule border-y border-dashed border-rule">
+                <div className="flex items-center justify-between py-3.5">
+                  <dt className="text-sm text-ink-2">Actual focus time</dt>
+                  <dd className="mb-num text-sm">{analytics?.actual_focus_minutes ?? 0} min</dd>
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-white/55 p-4">
-                  <span className="text-sm text-[#7b837b]">Break minutes (7 days)</span>
-                  <strong className="text-sm">{dailyActivity.reduce((sum, day) => sum + day.break_minutes, 0)} min</strong>
+                <div className="flex items-center justify-between py-3.5">
+                  <dt className="text-sm text-ink-2">Break minutes (7 days)</dt>
+                  <dd className="mb-num text-sm">{dailyActivity.reduce((sum, day) => sum + day.break_minutes, 0)} min</dd>
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-white/55 p-4">
-                  <span className="text-sm text-[#7b837b]">Interruptions (7 days)</span>
-                  <strong className="text-sm">{dailyActivity.reduce((sum, day) => sum + day.interruptions, 0)}</strong>
+                <div className="flex items-center justify-between py-3.5">
+                  <dt className="text-sm text-ink-2">Interruptions (7 days)</dt>
+                  <dd className="mb-num text-sm">{dailyActivity.reduce((sum, day) => sum + day.interruptions, 0)}</dd>
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-white/55 p-4">
-                  <span className="text-sm text-[#7b837b]">Completed sessions (7 days)</span>
-                  <strong className="text-sm">{dailyActivity.reduce((sum, day) => sum + day.sessions, 0)}</strong>
+                <div className="flex items-center justify-between py-3.5">
+                  <dt className="text-sm text-ink-2">Completed sessions (7 days)</dt>
+                  <dd className="mb-num text-sm">{dailyActivity.reduce((sum, day) => sum + day.sessions, 0)}</dd>
                 </div>
-              </div>
+              </dl>
             </div>
           </div>
 
-          <div className="glass-panel rounded-2xl p-5 sm:p-6">
+          <div className="mb-card p-5 sm:p-6">
             <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#edf5ed] text-xl text-[#397858]">✳</div>
+              <Icon name="spark" size={20} className="mt-1 shrink-0 text-violet-ink" />
               <div>
-                <h2 className="font-[Manrope] text-lg font-bold">Mental fatigue estimate</h2>
-                <p className="mt-1 text-sm leading-6 text-[#858c85]">
+                <h2 className="mb-title">Mental fatigue estimate</h2>
+                <p className="mt-1 max-w-[70ch] text-sm leading-6 text-ink-2">
                   Experimental estimate based on your current workload and recorded work patterns. It is not a medical diagnosis.
                 </p>
               </div>
             </div>
 
             {!fatigueEstimate || fatigueEntries.length === 0 ? (
-              <p className="mt-5 rounded-xl bg-white/55 p-4 text-sm text-[#858c85]">
+              <p className="mt-5 rounded-xl bg-tray-2 p-4 text-sm text-ink-2">
                 No fatigue estimate details were returned. Add tasks and complete work-log sessions, then refresh this page.
               </p>
             ) : (
               <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {fatigueEntries.map(([key, value]) => (
-                  <div key={key} className="rounded-xl border border-white/80 bg-white/55 p-4">
-                    <p className="text-xs capitalize text-[#858c85]">{key.replace(/_/g, ' ')}</p>
-                    <p className="mt-2 break-words font-[Manrope] text-xl font-bold text-[#315d3d]">
+                  <div key={key} className="rounded-xl bg-tray-2 p-4">
+                    <p className="text-xs capitalize text-ink-3">{key.replace(/_/g, ' ')}</p>
+                    <p className={`mt-2 break-words ${displayValue(value).length > 24 ? 'text-sm leading-6 text-ink-2' : 'mb-num text-xl capitalize'}`}>
                       {displayValue(value)}
                     </p>
                   </div>
@@ -1080,7 +1107,7 @@ function AnalyticsPage({
           <FatigueSimulator />
           <PersonalizedRecommendations />
           <FeedbackAnalytics />
-          
+
         </>
 
       )}
@@ -1097,23 +1124,20 @@ function MetricCard({
   label: string
   value: string
   note: string
-  icon: string
+  icon: IconName
 }) {
   return (
-    <div className="glass-panel rounded-2xl p-5">
+    <div className="p-5 sm:p-6">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm text-[#7e877e]">{label}</p>
-
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/80 bg-[#edf5ed]/80 text-lg text-[#397858]">
-          {icon}
-        </span>
+        <p className="text-sm text-ink-2">{label}</p>
+        <Icon name={icon} size={17} className="text-ink-3" />
       </div>
 
-      <p className="mt-5 break-words font-[Manrope] text-2xl font-bold tracking-tight">
+      <p className="mb-num mt-4 break-words text-[22px] leading-tight sm:mt-5 sm:text-[28px]">
         {value}
       </p>
 
-      <p className="mt-1 text-xs leading-5 text-[#929991]">{note}</p>
+      <p className="mt-1 text-xs leading-5 text-ink-3">{note}</p>
     </div>
   )
 }

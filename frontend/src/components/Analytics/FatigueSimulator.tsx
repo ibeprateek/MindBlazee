@@ -102,18 +102,18 @@ const factorDescriptions: Record<string, string> = {
   ]
 
   const levelColor = (level: string) => {
-    if (level === 'low') return 'text-green-600'
-    if (level === 'moderate') return 'text-yellow-600'
-    return 'text-red-600'
+    if (level === 'low') return 'text-olive-ink'
+    if (level === 'moderate') return 'text-amber-ink'
+    return 'text-pink-ink'
   }
 
   return (
-    <section className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="mb-card space-y-6 p-6">
       <div>
-        <h2 className="text-xl font-semibold text-slate-900">
+        <h2 className="text-xl font-medium text-ink">
           What-If Fatigue Simulator
         </h2>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-ink-2">
           Adjust your work patterns to explore how the estimated score changes.
         </p>
       </div>
@@ -122,10 +122,10 @@ const factorDescriptions: Record<string, string> = {
         {sliders.map((slider) => (
           <div key={slider.label}>
             <div className="mb-2 flex items-center justify-between gap-4">
-              <label className="text-sm font-medium text-slate-700">
+              <label className="text-sm font-medium text-ink">
                 {slider.label}
               </label>
-              <span className="text-sm font-semibold text-slate-900">
+              <span className="text-sm font-medium text-ink">
                 {slider.value} {slider.unit}
               </span>
             </div>
@@ -139,9 +139,9 @@ const factorDescriptions: Record<string, string> = {
               onChange={(event) =>
                 slider.setValue(Number(event.target.value))
               }
-              className="w-full cursor-pointer accent-indigo-600"
+              className="w-full cursor-pointer accent-ink"
             />
-            <div className="mt-1 flex justify-between text-xs text-slate-400">
+            <div className="mt-1 flex justify-between text-xs text-ink-3">
               <span>{slider.min}</span>
               <span>{slider.max}</span>
             </div>
@@ -150,33 +150,33 @@ const factorDescriptions: Record<string, string> = {
       </div>
 
       {loading && (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-2">
           Calculating your scenario...
         </p>
       )}
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-danger">
           {error}
         </p>
       )}
 
       {result && (
-        <div className="space-y-5 border-t border-slate-200 pt-5">
+        <div className="space-y-5 border-t border-line pt-5">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-sm text-slate-500">Current score</p>
-              <p className="mt-2 text-3xl font-bold text-slate-900">
+            <div className="rounded-xl bg-tray-2 p-4">
+              <p className="text-sm text-ink-2">Current score</p>
+              <p className="mt-2 text-3xl font-medium text-ink">
                 {result.current_score.toFixed(2)}
               </p>
             </div>
 
             <div className="space-y-5">
   <div>
-    <h3 className="font-semibold text-slate-900">
+    <h3 className="font-medium text-ink">
       Fatigue Factor Breakdown
     </h3>
-    <p className="mt-1 text-sm text-slate-500">
+    <p className="mt-1 text-sm text-ink-2">
       Compare each factor before and after your hypothetical adjustments.
     </p>
   </div>
@@ -192,14 +192,14 @@ const factorDescriptions: Record<string, string> = {
     return (
       <div
         key={key}
-        className="rounded-xl border border-slate-200 p-4"
+        className="rounded-xl border border-line p-4"
       >
         <div className="flex flex-col justify-between gap-2 sm:flex-row">
           <div>
-            <h4 className="font-medium text-slate-800">
+            <h4 className="font-medium text-ink">
               {factorLabels[key] ?? key}
             </h4>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-ink-2">
               {factorDescriptions[key] ?? 'Factor used in the fatigue estimate.'}
             </p>
           </div>
@@ -215,13 +215,13 @@ const factorDescriptions: Record<string, string> = {
         </div>
 
         <div className="mt-4">
-          <div className="mb-1 flex justify-between text-xs text-slate-500">
+          <div className="mb-1 flex justify-between text-xs text-ink-2">
             <span>Current factor score</span>
             <span>{currentValue.toFixed(1)}%</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+          <div className="h-2 overflow-hidden rounded-full bg-tray">
             <div
-              className="h-full rounded-full bg-slate-400 transition-all"
+              className="h-full rounded-full bg-[#bdbdbd] transition-all"
               style={{
                 width: `${Math.max(0, Math.min(100, currentValue))}%`,
               }}
@@ -230,13 +230,13 @@ const factorDescriptions: Record<string, string> = {
         </div>
 
         <div className="mt-3">
-          <div className="mb-1 flex justify-between text-xs text-slate-500">
+          <div className="mb-1 flex justify-between text-xs text-ink-2">
             <span>Projected factor score</span>
             <span>{projectedValue.toFixed(1)}%</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+          <div className="h-2 overflow-hidden rounded-full bg-tray">
             <div
-              className="h-full rounded-full bg-indigo-600 transition-all"
+              className="h-full rounded-full bg-violet transition-all"
               style={{
                 width: `${Math.max(0, Math.min(100, projectedValue))}%`,
               }}
@@ -244,7 +244,7 @@ const factorDescriptions: Record<string, string> = {
           </div>
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-slate-600">
+        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-ink-2">
           <span>Weight: {(weight * 100).toFixed(0)}%</span>
           <span>
             Current contribution: {currentContribution.toFixed(2)} points
@@ -258,46 +258,46 @@ const factorDescriptions: Record<string, string> = {
   })}
 </div>
 
-            <div className="rounded-xl bg-indigo-50 p-4">
-              <p className="text-sm text-slate-500">Projected score</p>
-              <p className="mt-2 text-3xl font-bold text-indigo-700">
+            <div className="rounded-xl bg-wash p-4">
+              <p className="text-sm text-ink-2">Projected score</p>
+              <p className="mt-2 text-3xl font-medium text-violet-ink">
                 {result.projected_score.toFixed(2)}
               </p>
             </div>
 
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-sm text-slate-500">Score change</p>
-              <p className="mt-2 text-3xl font-bold text-slate-900">
+            <div className="rounded-xl bg-tray-2 p-4">
+              <p className="text-sm text-ink-2">Score change</p>
+              <p className="mt-2 text-3xl font-medium text-ink">
                 {result.score_difference > 0 ? '+' : ''}
                 {result.score_difference.toFixed(2)}
               </p>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-ink-2">
                 Negative means a lower estimated score.
               </p>
             </div>
           </div>
 
           <div>
-            <p className="text-sm text-slate-500">Projected level</p>
-            <p className={`mt-1 text-lg font-semibold capitalize ${levelColor(result.projected_level)}`}>
+            <p className="text-sm text-ink-2">Projected level</p>
+            <p className={`mt-1 text-lg font-medium capitalize ${levelColor(result.projected_level)}`}>
               {result.projected_level}
             </p>
           </div>
 
           <div>
-            <h3 className="font-semibold text-slate-900">
+            <h3 className="font-medium text-ink">
               Recommendations
             </h3>
             <div className="mt-3 space-y-3">
               {result.recommendations.map((item, index) => (
                 <div
                   key={`${item.factor}-${index}`}
-                  className="rounded-lg bg-slate-50 p-4"
+                  className="rounded-lg bg-tray-2 p-4"
                 >
-                  <p className="font-medium text-slate-800">
+                  <p className="font-medium text-ink">
                     {item.title}
                   </p>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <p className="mt-1 text-sm text-ink-2">
                     {item.message}
                   </p>
                 </div>
@@ -305,7 +305,7 @@ const factorDescriptions: Record<string, string> = {
             </div>
           </div>
 
-          <p className="text-xs leading-5 text-slate-500">
+          <p className="text-xs leading-5 text-ink-2">
             {result.disclaimer}
           </p>
         </div>
