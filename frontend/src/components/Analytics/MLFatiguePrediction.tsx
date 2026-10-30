@@ -1,4 +1,5 @@
 
+import Icon from '../Icon'
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import {
@@ -50,22 +51,17 @@ export default function MLFatiguePrediction() {
   }
 
   const inputClass =
-    'mt-2 w-full rounded-xl border border-[#e2e9e1] bg-white/80 px-3 py-3 text-sm outline-none focus:border-[#72a583] focus:ring-4 focus:ring-[#397858]/10'
+    'mb-input mt-2'
 
   return (
-    <section className="glass-panel rounded-2xl p-5 sm:p-7">
+    <section className="mb-card p-5 sm:p-7">
       <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#edf5ed] text-xl text-[#397858]">
-          ✳
-        </div>
+        <Icon name="spark" size={20} className="mt-1 shrink-0 text-violet-ink" />
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#5b8a67]">
-            MACHINE LEARNING
-          </p>
-          <h2 className="mt-1 font-[Manrope] text-xl font-bold">
+          <h2 className="mt-1 text-xl font-medium">
             Mental Fatigue Prediction
           </h2>
-          <p className="mt-2 text-sm leading-6 text-[#858c85]">
+          <p className="mt-2 text-sm leading-6 text-ink-2">
             Enter your current work patterns to estimate your self-reported
             fatigue rating using the experimental Ridge Regression model.
           </p>
@@ -75,7 +71,7 @@ export default function MLFatiguePrediction() {
       <form onSubmit={handleSubmit} className="mt-6 space-y-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
-            <label htmlFor="ml-work-hours" className="text-sm font-semibold">
+            <label htmlFor="ml-work-hours" className="text-sm font-medium">
               Work hours
             </label>
             <input
@@ -92,7 +88,7 @@ export default function MLFatiguePrediction() {
           </div>
 
           <div>
-            <label htmlFor="ml-interruptions" className="text-sm font-semibold">
+            <label htmlFor="ml-interruptions" className="text-sm font-medium">
               Number of interruptions
             </label>
             <input
@@ -108,7 +104,7 @@ export default function MLFatiguePrediction() {
           </div>
 
           <div>
-            <label htmlFor="ml-pending" className="text-sm font-semibold">
+            <label htmlFor="ml-pending" className="text-sm font-medium">
               Pending workload (minutes)
             </label>
             <input
@@ -124,7 +120,7 @@ export default function MLFatiguePrediction() {
           </div>
 
           <div>
-            <label htmlFor="ml-difficulty" className="text-sm font-semibold">
+            <label htmlFor="ml-difficulty" className="text-sm font-medium">
               Task difficulty
             </label>
             <select
@@ -142,8 +138,8 @@ export default function MLFatiguePrediction() {
           </div>
 
           <div>
-            <label htmlFor="ml-sleep" className="text-sm font-semibold">
-              Sleep hours <span className="font-normal text-[#858c85]">(optional)</span>
+            <label htmlFor="ml-sleep" className="text-sm font-medium">
+              Sleep hours <span className="font-normal text-ink-2">(optional)</span>
             </label>
             <input
               id="ml-sleep"
@@ -159,7 +155,7 @@ export default function MLFatiguePrediction() {
           </div>
 
           <div>
-            <label htmlFor="ml-activity" className="text-sm font-semibold">
+            <label htmlFor="ml-activity" className="text-sm font-medium">
               Primary activity
             </label>
             <select
@@ -182,7 +178,7 @@ export default function MLFatiguePrediction() {
         </div>
 
         {error && (
-          <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          <p role="alert" className="mb-alert">
             {error}
           </p>
         )}
@@ -190,41 +186,41 @@ export default function MLFatiguePrediction() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-[#397858] px-5 py-3 font-semibold text-white shadow-md transition hover:bg-[#2c6447] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          className="mb-btn w-full sm:w-auto"
         >
           {loading ? 'Predicting...' : 'Predict mental fatigue'}
         </button>
       </form>
 
       {result && (
-        <div className="mt-6 rounded-2xl border border-[#dce9dc] bg-white/65 p-5">
-          <p className="text-sm font-semibold text-[#426b4b]">
+        <div className="mt-6 rounded-xl border border-line bg-tray-2 p-5">
+          <p className="text-sm font-medium text-ink">
             Your predicted fatigue rating
           </p>
 
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="font-[Manrope] text-4xl font-bold text-[#315d3d]">
+            <span className="text-4xl font-medium text-ink">
               {result.predicted_fatigue_rating.toFixed(2)}
             </span>
-            <span className="text-sm text-[#858c85]">/ 10</span>
+            <span className="text-sm text-ink-2">/ 10</span>
           </div>
 
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#e4ece2]">
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-tray">
             <div
-              className="h-full rounded-full bg-[#72a583] transition-all"
+              className="h-full rounded-full bg-blue transition-all"
               style={{
                 width: `${result.predicted_fatigue_rating * 10}%`,
               }}
             />
           </div>
 
-          <p className="mt-4 text-xs leading-5 text-[#858c85]">
+          <p className="mt-4 text-xs leading-5 text-ink-2">
             Model: {result.model}. {result.disclaimer}
           </p>
         </div>
       )}
 
-      <p className="mt-5 text-xs leading-5 text-[#929991]">
+      <p className="mt-5 text-xs leading-5 text-ink-3">
         This is an experimental prediction trained on a small survey dataset.
         It is not a clinical assessment or diagnosis. Results may be inaccurate
         for individuals or activities unlike those in the training data.

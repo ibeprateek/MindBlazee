@@ -25,6 +25,7 @@ vi.mock('../Services/tasks', () => ({
 
 vi.mock('../Services/auth', () => ({
   logoutUser: mocks.logoutUser,
+  getAccessToken: () => null,
 }))
 
 vi.mock('../Services/analytics', () => ({

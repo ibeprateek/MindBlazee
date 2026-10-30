@@ -2,6 +2,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { registerUser } from '../Services/auth'
+import AuthLayout from '../components/AuthLayout'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -40,99 +41,83 @@ export default function Register() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-5 py-12">
-      <div className="glass-panel w-full max-w-md rounded-3xl p-7 sm:p-10">
-        <Link to="/" className="mb-9 flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#397858] text-xl font-bold text-white">
-            M
-          </span>
-          <span className="font-[Manrope] text-2xl font-extrabold">mindblaze</span>
-        </Link>
-
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5b8a67]">
-          YOUR SPACE TO GROW
-        </p>
-        <h1 className="mt-2 font-[Manrope] text-3xl font-bold">Create your account.</h1>
-        <p className="mt-2 text-sm leading-6 text-[#7b837b]">
-          Start building a healthier relationship with your workload.
-        </p>
-
-        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-          <div>
-            <label htmlFor="fullName" className="mb-2 block text-sm font-medium">
-              Full name <span className="font-normal text-[#929991]">(optional)</span>
-            </label>
-            <input
-              id="fullName"
-              type="text"
-              autoComplete="name"
-              maxLength={100}
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
-              placeholder="Your name"
-              className="w-full rounded-xl border border-[#dfe7dd] bg-white/75 px-4 py-3 text-sm outline-none transition focus:border-[#397858] focus:ring-4 focus:ring-[#397858]/10"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium">
-              Email address
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
-              className="w-full rounded-xl border border-[#dfe7dd] bg-white/75 px-4 py-3 text-sm outline-none transition focus:border-[#397858] focus:ring-4 focus:ring-[#397858]/10"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-medium">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="new-password"
-              minLength={8}
-              maxLength={128}
-              required
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="At least 8 characters"
-              className="w-full rounded-xl border border-[#dfe7dd] bg-white/75 px-4 py-3 text-sm outline-none transition focus:border-[#397858] focus:ring-4 focus:ring-[#397858]/10"
-            />
-            <p className="mt-2 text-xs text-[#929991]">
-              Use 8–128 characters.
-            </p>
-          </div>
-
-          {error && (
-            <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-[#397858] px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#397858]/15 transition hover:bg-[#2c6447] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {loading ? 'Creating account…' : 'Create account'}
-          </button>
-        </form>
-
-        <p className="mt-7 text-center text-sm text-[#7b837b]">
+    <AuthLayout
+      title="Create your account."
+      titleQuiet="It takes a minute."
+      subtitle="Start building a healthier relationship with your workload."
+      footer={
+        <>
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-[#397858] hover:underline">
+          <Link to="/login" className="font-medium text-ink underline decoration-rule underline-offset-4 hover:decoration-ink">
             Sign in
           </Link>
-        </p>
-      </div>
-    </main>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit} className="mt-9 space-y-5">
+        <div>
+          <label htmlFor="fullName" className="mb-label">
+            Full name <span className="font-normal text-ink-3">(optional)</span>
+          </label>
+          <input
+            id="fullName"
+            type="text"
+            autoComplete="name"
+            maxLength={100}
+            value={fullName}
+            onChange={(event) => setFullName(event.target.value)}
+            placeholder="Your name"
+            className="mb-input"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="email" className="mb-label">
+            Email address
+          </label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="you@example.com"
+            className="mb-input"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="mb-label">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            autoComplete="new-password"
+            minLength={8}
+            maxLength={128}
+            required
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="At least 8 characters"
+            className="mb-input"
+          />
+          <p className="mt-2 text-xs text-ink-3">
+            Use 8–128 characters.
+          </p>
+        </div>
+
+        {error && (
+          <p role="alert" className="mb-alert">
+            {error}
+          </p>
+        )}
+
+        <button type="submit" disabled={loading} className="mb-btn w-full !min-h-11">
+          {loading ? 'Creating account…' : 'Create account'}
+        </button>
+      </form>
+    </AuthLayout>
   )
 }

@@ -88,8 +88,8 @@ export default function PersonalizedRecommendations() {
 
   if (loading) {
     return (
-      <section className="glass-panel rounded-2xl p-6">
-        <p className="text-sm text-[#858c85]">
+      <section className="mb-card p-6">
+        <p className="text-sm text-ink-2">
           Generating personalized recommendations...
         </p>
       </section>
@@ -98,14 +98,14 @@ export default function PersonalizedRecommendations() {
 
   if (error || !data) {
     return (
-      <section className="glass-panel rounded-2xl p-6">
-        <p role="alert" className="text-sm text-red-700">
+      <section className="mb-card p-6">
+        <p role="alert" className="text-sm text-danger">
           {error || 'No recommendation data available.'}
         </p>
         <button
           type="button"
           onClick={() => void loadRecommendations()}
-          className="mt-3 rounded-xl bg-[#397858] px-4 py-2 text-sm font-semibold text-white"
+          className="mb-btn mt-3"
         >
           Try again
         </button>
@@ -114,30 +114,27 @@ export default function PersonalizedRecommendations() {
   }
 
   return (
-    <section className="glass-panel space-y-5 rounded-2xl p-5 sm:p-6">
+    <section className="mb-card space-y-5 p-5 sm:p-6">
       <div>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.17em] text-[#5b8a67]">
-          YOUR NEXT STEPS
-        </p>
-        <h2 className="font-[Manrope] text-xl font-bold">
+        <h2 className="mb-title">
           Personalized recommendations
         </h2>
-        <p className="mt-1 text-sm leading-6 text-[#858c85]">
+        <p className="mt-1 text-sm leading-6 text-ink-2">
           Suggestions based on your recorded workload and work patterns.
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-xl bg-white/60 p-4">
-          <p className="text-sm text-[#858c85]">Current estimated score</p>
-          <p className="mt-2 text-2xl font-bold text-[#315d3d]">
+        <div className="rounded-xl bg-tray-2 p-4">
+          <p className="text-sm text-ink-2">Current estimated score</p>
+          <p className="mt-2 text-2xl font-medium text-ink">
             {data.fatigue_score.toFixed(2)} / 100
           </p>
         </div>
 
-        <div className="rounded-xl bg-white/60 p-4">
-          <p className="text-sm text-[#858c85]">Estimated level</p>
-          <p className="mt-2 text-2xl font-bold capitalize text-[#315d3d]">
+        <div className="rounded-xl bg-tray-2 p-4">
+          <p className="text-sm text-ink-2">Estimated level</p>
+          <p className="mt-2 text-2xl font-medium capitalize text-ink">
             {data.fatigue_level}
           </p>
         </div>
@@ -152,36 +149,36 @@ export default function PersonalizedRecommendations() {
           return (
             <article
               key={`${recommendation.factor}-${recommendation.priority}`}
-              className="rounded-xl border border-white/80 bg-white/60 p-4"
+              className="rounded-xl border border-line bg-tray-2 p-4"
             >
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#edf5ed] font-semibold text-[#397858]">
+                <div className={`mb-chip ${['mb-chip--pink', 'mb-chip--olive', 'mb-chip--blue', 'mb-chip--violet'][(Number(recommendation.priority) - 1) % 4] ?? ''} h-7 w-7 shrink-0 justify-center !p-0 !text-sm`}>
                   {recommendation.priority}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium uppercase tracking-wide text-[#5b8a67]">
-                    {factorLabels[recommendation.factor] ??
-                      recommendation.factor.replace(/_/g, ' ')}
-                  </p>
-
-                  <h3 className="mt-1 font-semibold text-[#263b2b]">
+                  <h3 className="mt-0.5 font-medium text-ink">
                     {recommendation.title}
                   </h3>
 
-                  <p className="mt-2 text-sm leading-6 text-[#737d74]">
+                  <span className="mb-chip mt-2 capitalize">
+                    {factorLabels[recommendation.factor] ??
+                      recommendation.factor.replace(/_/g, ' ')}
+                  </span>
+
+                  <p className="mt-2 text-sm leading-6 text-ink-2">
                     {recommendation.message}
                   </p>
 
                   {recommendation.weighted_contribution !== null && (
-                    <p className="mt-3 text-xs text-[#858c85]">
+                    <p className="mt-3 text-xs text-ink-2">
                       Weighted contribution:{' '}
                       {recommendation.weighted_contribution.toFixed(2)} points
                     </p>
                   )}
 
                   <div className="mt-4">
-                    <p className="mb-2 text-xs font-medium text-[#737d74]">
+                    <p className="mb-2 text-xs font-medium text-ink-2">
                       Was this recommendation useful?
                     </p>
 
@@ -205,11 +202,7 @@ export default function PersonalizedRecommendations() {
                             )
                           }
                           aria-pressed={savedFeedback?.type === type}
-                          className={`rounded-lg border px-3 py-2 text-xs font-semibold transition ${
-                            savedFeedback?.type === type
-                              ? 'border-[#397858] bg-[#edf5ed] text-[#315d3d]'
-                              : 'border-[#dce8dc] text-[#397858] hover:bg-[#edf5ed]'
-                          } disabled:cursor-not-allowed disabled:opacity-60`}
+                          className={`${savedFeedback?.type === type ? 'mb-btn' : 'mb-btn-ghost'} mb-btn-sm`}
                         >
                           {isSubmitting && savedFeedback?.type !== type
                             ? 'Saving...'
@@ -221,14 +214,14 @@ export default function PersonalizedRecommendations() {
                     {savedFeedback && (
                       <p
                         role="status"
-                        className="mt-2 text-xs text-[#397858]"
+                        className="mt-2 text-xs text-blue-ink"
                       >
                         {savedFeedback.message}
                       </p>
                     )}
 
                     {feedbackErrors[key] && (
-                      <p role="alert" className="mt-2 text-xs text-red-700">
+                      <p role="alert" className="mt-2 text-xs text-danger">
                         {feedbackErrors[key]}
                       </p>
                     )}
@@ -240,14 +233,14 @@ export default function PersonalizedRecommendations() {
         })}
       </div>
 
-      <p className="text-xs leading-5 text-[#929991]">
+      <p className="text-xs leading-5 text-ink-3">
         {data.disclaimer}
       </p>
 
       <button
         type="button"
         onClick={() => void loadRecommendations()}
-        className="rounded-xl border border-[#dce8dc] px-4 py-2.5 text-sm font-semibold text-[#397858] hover:bg-[#edf5ed]"
+        className="mb-btn-ghost"
       >
         Refresh recommendations
       </button>
